@@ -1,0 +1,27 @@
+from repltable import Database, Table
+from replit import Database as rdb
+db = Database(rdb())
+
+def test_get_table():
+    table = db['newtesttable']
+    print(table)
+    assert isinstance(table, Table)
+
+def test_get_key():
+    table = db['newtesttable']
+    print(table.get(fdsfds=1))
+    assert not table.get(id=231231)
+
+def test_drop_table():
+    table = db['newtesttable']
+    table.drop()
+    assert getattr(db, 'newtesttable', None) is None
+
+def test_set_get():
+    table = db['things']
+    table.insert(dict(name='test', value=1, id=2131))
+    assert isinstance(table.get(id=2131), list) and (table.get(id=2131))[0]['name'] in ['test', 'test2']
+    assert table.get_one(id=2131)['name'] in ['test', 'test2']
+    table.update(dict(id=2131, name='test2'), id=2131)
+    assert isinstance(table.get(id=2131), list) and (table.get(id=2131))[0]['name'] == 'test2'
+    assert table.get_one(id=2131)['name'] == 'test2'
