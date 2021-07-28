@@ -27,6 +27,9 @@ class Table:
         self.db = db
         self.name = name
 
+    def __update_changes(self):
+        self.db[self.name] = self._documents
+
     def get(self, **kwargs):
         return [
             i
@@ -39,12 +42,14 @@ class Table:
 
     def insert(self, data: dict):
         self._documents.append(data)
+        self.__update_changes()
 
     def update(self, data: dict, **kwargs):
         for index, doc in enumerate(self._documents):
             for query, ans in kwargs.items():
                 if doc[query] == ans:
                     self._documents[index] = data
+        self.__update_changes()
 
     def drop(self):
         delattr(self.db, self.name)
