@@ -25,3 +25,17 @@ def test_set_get():
     table.update(dict(id=2131, name='test2'), id=2131)
     assert isinstance(table.get(id=2131), list) and (table.get(id=2131))[0]['name'] == 'test2'
     assert table.get_one(id=2131)['name'] == 'test2'
+
+def test_drop_table_with_data():
+    table = db['things']
+    table.insert(dict(name='test', value=1, id=2131))
+    table.insert(dict(name='test2', value=2, id=2132))
+    table.drop()
+    assert getattr(db, 'things', None) is None
+
+def test_delete():
+    table = db['things']
+    table.insert(dict(name='test', value=1, id=2131))
+    table.insert(dict(name='test2', value=2, id=2132))
+    table.delete(id=2131)
+    assert table.get(id=2131) is None
