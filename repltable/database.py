@@ -6,7 +6,7 @@ class Database:
     def __init__(self, database: rdb):
         self._db = database
 
-    def __setitem__(self, name: str, value: str) -> None:
+    def __setitem__(self, name: str, value) -> None:
         self._db[name] = value
 
     def __getitem__(self, key: str):
@@ -58,7 +58,7 @@ class Table:
     def __update_changes(self):
         self.db[self.name] = self._documents
 
-    def get(self, **kwargs):
+    def get(self, **filters):
         """Gets all documents matching the given query.
 
         Returns
@@ -68,12 +68,12 @@ class Table:
         """
         l = []
         for i in self._documents:
-            for key, value in kwargs.items():
+            for key, value in filters.items():
                 if i[key] == value:
                     l.append(i)
         return l
 
-    def get_one(self, **kwargs):
+    def get_one(self, **filters):
         """Gets the first document matching the given query.
 
         Returns
@@ -82,7 +82,7 @@ class Table:
             The document found.
         """
         try:
-            return self.get(**kwargs)[0]
+            return self.get(**filters)[0]
         except IndexError:
             return None
 
@@ -97,7 +97,7 @@ class Table:
         self._documents.append(data)
         self.__update_changes()
 
-    def update(self, data: dict, **kwargs):
+    def update(self, data: dict, **filters):
         """Update an existing document in the table.
 
         Parameters
@@ -108,11 +108,11 @@ class Table:
             Filters that the document must match.
         """
         for index, doc in enumerate(self._documents):
-            for query, ans in kwargs.items():
+            for query, ans in filters.items():
                 if doc[query] == ans:
                     self._documents[index] = data
         self.__update_changes()
 
     def drop(self):
-        """Delete this table."""
+        """Delete the current table."""
         delattr(self.db, self.name)
