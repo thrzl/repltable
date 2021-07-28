@@ -25,19 +25,35 @@ class Database:
         ----------
         table : str
             The name of the table to drop.
-        """        
+        """
         if table in self._db.keys():
             del self._db[table]
+
 
 class Table:
     """An object representing a table in the database.
 
     You should not need to create an instance of this class yourself.
-    """    
+    """
+
     def __init__(self, docs: List[dict], db: Database, name: str):
         self._documents = docs
         self.db = db
         self.name = name
+
+    def update(self, **filters):
+        """Delete an existing document in the table.
+
+        Parameters
+        ----------
+        **filters
+            Filters that the document must match.
+        """
+        for index, doc in enumerate(self._documents):
+            for query, ans in filters.items():
+                if doc[query] == ans:
+                    del self._documents[index]
+        self.__update_changes()
 
     def __update_changes(self):
         self.db[self.name] = self._documents
@@ -77,7 +93,7 @@ class Table:
         ----------
         data : dict
             A dictionary containing the data to insert.
-        """        
+        """
         self._documents.append(data)
         self.__update_changes()
 
@@ -90,7 +106,7 @@ class Table:
             The new data
         **filters
             Filters that the document must match.
-        """        
+        """
         for index, doc in enumerate(self._documents):
             for query, ans in kwargs.items():
                 if doc[query] == ans:
@@ -98,6 +114,5 @@ class Table:
         self.__update_changes()
 
     def drop(self):
-        """Delete this table.
-        """        
+        """Delete this table."""
         delattr(self.db, self.name)
