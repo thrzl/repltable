@@ -29,7 +29,6 @@ class Database:
         if table in self._db.keys():
             del self._db[table]
 
-
 class Table:
     """An object representing a table in the database.
 
@@ -50,12 +49,13 @@ class Table:
         -------
         list[dict]
             Returns a list of documents matching the given query.
-        """        
-        return [
-            i
-            for i in self._documents
-            if (i[query] == ans for query, ans in kwargs.items())
-        ]
+        """
+        l = []
+        for i in self._documents:
+            for key, value in kwargs.items():
+                if i[key] == value:
+                    l.append(i)
+        return l
 
     def get_one(self, **kwargs):
         """Gets the first document matching the given query.
@@ -64,8 +64,11 @@ class Table:
         -------
         dict
             The document found.
-        """        
-        return self.get(**kwargs)[0]
+        """
+        try:
+            return self.get(**kwargs)[0]
+        except IndexError:
+            return None
 
     def insert(self, data: dict):
         """Insert a new document into the table.
