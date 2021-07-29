@@ -113,22 +113,6 @@ class Table:
         self._documents.append(data)
         self.__update_changes()
 
-    def update(self, data: dict, **filters):
-        """Update an existing document in the table.
-
-        Parameters
-        ----------
-        data : dict
-            The new data
-        **filters
-            Filters that the document must match.
-        """
-        for index, doc in enumerate(self._documents):
-            for query, ans in filters.items():
-                if doc[query] == ans:
-                    self._documents[index] = data
-        self.__update_changes()
-
     def drop(self):
         """Delete the current table."""
         delattr(self.db, self.name)
