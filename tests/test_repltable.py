@@ -38,4 +38,4 @@ def test_delete():
     table.insert(dict(name='test', value=1, id=2131))
     table.insert(dict(name='test2', value=2, id=2132))
     table.delete(id=2131)
-    assert table.get(id=2131) is None
+    assert not table.get(id=2131)
