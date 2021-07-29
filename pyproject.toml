@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "repltable"
-version = "0.1.3"
+version = "0.1.4"
 description = "Table support for the replit database"
 authors = ["terabyte. <mikey@mikeyo.ml>"]
 

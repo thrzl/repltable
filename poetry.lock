@@ -169,7 +169,7 @@ smmap = ">=3.0.1,<5"
 
 [[package]]
 name = "gitpython"
-version = "3.1.19"
+version = "3.1.20"
 description = "Python Git Library"
 category = "dev"
 optional = false
@@ -348,7 +348,7 @@ python-versions = "*"
 
 [[package]]
 name = "replit"
-version = "3.2.2"
+version = "3.2.4"
 description = "A library for interacting with features of repl.it"
 category = "main"
 optional = false
@@ -572,8 +572,8 @@ gitdb = [
     {file = "gitdb-4.0.7.tar.gz", hash = "sha256:96bf5c08b157a666fec41129e6d327235284cca4c81e92109260f353ba138005"},
 ]
 gitpython = [
-    {file = "GitPython-3.1.19-py3-none-any.whl", hash = "sha256:17690588e36bd0cee21921ce621fad1e8be45a37afa486ff846fb8efcf53c34c"},
-    {file = "GitPython-3.1.19.tar.gz", hash = "sha256:18f4039b96b5567bc4745eb851737ce456a2d499cecd71e84f5c0950e92d0e53"},
+    {file = "GitPython-3.1.20-py3-none-any.whl", hash = "sha256:b1e1c269deab1b08ce65403cf14e10d2ef1f6c89e33ea7c5e5bb0222ea593b8a"},
+    {file = "GitPython-3.1.20.tar.gz", hash = "sha256:df0e072a200703a65387b0cfdf0466e3bab729c0458cf6b7349d0e9877636519"},
 ]
 idna = [
     {file = "idna-3.2-py3-none-any.whl", hash = "sha256:14475042e284991034cb48e06f6851428fb14c4dc953acd9be9a5e95c7b6dd7a"},
@@ -776,8 +776,8 @@ regex = [
     {file = "regex-2021.7.6.tar.gz", hash = "sha256:8394e266005f2d8c6f0bc6780001f7afa3ef81a7a2111fa35058ded6fce79e4d"},
 ]
 replit = [
-    {file = "replit-3.2.2-py3-none-any.whl", hash = "sha256:e76494313329f362a0c415bcc2ce9eda68021b44a1cac93bb14d98f9f6768360"},
-    {file = "replit-3.2.2.tar.gz", hash = "sha256:55e4a238142b23eee29ab0c3082af338366ebe9c1ddb008b3b794df1b6841bc3"},
+    {file = "replit-3.2.4-py3-none-any.whl", hash = "sha256:4fa5895e1e090ba23c179641bc88ab0486d1bea696515aa3147fce55733e29e1"},
+    {file = "replit-3.2.4.tar.gz", hash = "sha256:39c660d57c479d321f143a04d75d1297accf24fc91c0113f56d6a279b20e9427"},
 ]
 requests = [
     {file = "requests-2.26.0-py2.py3-none-any.whl", hash = "sha256:6c1246513ecd5ecd4528a0906f910e8f0f9c6b8ec72030dc9fd154dc1a6efd24"},
