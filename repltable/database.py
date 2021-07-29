@@ -41,7 +41,7 @@ class Table:
         self.db = db
         self.name = name
 
-    def update(self, **filters):
+    def delete(self, **filters):
         """Delete an existing document in the table.
 
         Parameters
@@ -53,6 +53,22 @@ class Table:
             for query, ans in filters.items():
                 if doc[query] == ans:
                     del self._documents[index]
+        self.__update_changes()
+
+    def update(self, data: dict, **filters):
+        """Update an existing document in the table.
+
+        Parameters
+        ----------
+        data : dict
+            The new document data.
+        **filters
+            Filters that the document must match.
+        """
+        for index, doc in enumerate(self._documents):
+            for query, ans in filters.items():
+                if doc[query] == ans:
+                    self._documents[index] = data
         self.__update_changes()
 
     def __update_changes(self):
