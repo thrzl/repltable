@@ -3,6 +3,15 @@ name = "repltable"
 version = "0.1.4"
 description = "Table support for the replit database"
 authors = ["terabyte. <mikey@mikeyo.ml>"]
+readme = "README.md"
+repository = "https://github.com/terabyte3/repltable"
+keywords = ["replit", "database", "table", "nosql"]
+classifiers = [
+    "Topic :: Database",   
+]
+packages = [
+    { include = "repltable" }
+]
 
 [tool.poetry.dependencies]
 python = "^3.8"
@@ -13,6 +22,8 @@ pytest = "^5.2"
 black = "^21.7b0"
 bandit = "^1.7.0"
 pytest-sugar = "^0.9.4"
+Sphinx = "^4.1.2"
+furo = "^2021.7.28-beta.40"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
