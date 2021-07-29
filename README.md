@@ -1,5 +1,7 @@
 # repltable
 
+![PyPI - Downloads](https://img.shields.io/pypi/dm/repltable?style=for-the-badge)
+
 this is a project is to make it so that you can have tables in the replit db.
 
 the main annoyance (for me) with replit is that it reverts a lot of database file changes, which forces you to use the repl.it database.
