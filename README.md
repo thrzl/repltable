@@ -1,6 +1,7 @@
 # repltable
 
 ![PyPI - Downloads](https://img.shields.io/pypi/dm/repltable?style=for-the-badge)
+![code style](https://img.shields.io/badge/code%20style-black-black?style=for-the-badge&logo=python)
 
 this is a project is to make it so that you can have tables in the replit db.
 
@@ -18,12 +19,15 @@ from replit import db
 
 database = repltable.Database(db)
 
+# repltable databases work like a dictionary
 database['table'].get(foo='bar')
 >>> [{'foo': 'bar'}, {'foo': 'baz'}]
 
+# repltable auto-creates tables if they don't exist
 table = database['nonexistenttable']
 table.insert(dict(foo='bar'))
 
+# you can get one, or get all matching documents
 table.get_one(foo='bar')
 >>> {'foo': 'bar'}
 ```
