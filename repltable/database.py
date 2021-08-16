@@ -74,7 +74,15 @@ class Table:
     def __update_changes(self):
         self.db[self.name] = self._documents
 
-    def get(self, **filters):
+    def __remove_duplicates(self, data: List[dict]):
+        l = [] # type: List[dict]
+        for i in data:
+            if i not in l:
+                l.append(i)
+        return l
+
+
+    def get(self, *text, **filters):
         """Gets all documents matching the given query.
 
         Returns
@@ -83,13 +91,23 @@ class Table:
             Returns a list of documents matching the given query.
         """
         l = []
+        if text:
+            for query in text:
+                for doc in self._documents:
+                    if query in doc.keys():
+                        l.append(doc)
+                    if query in doc.values():
+                        l.append(doc)
+
         for i in self._documents:
             for key, value in filters.items():
                 if i[key] == value:
                     l.append(i)
-        return l
+        if not any([text, filters]):
+            return self._documents
+        return self.__remove_duplicates(l)
 
-    def get_one(self, **filters):
+    def get_one(self, *args, **filters):
         """Gets the first document matching the given query.
 
         Returns
@@ -97,8 +115,10 @@ class Table:
         dict
             The document found.
         """
+        if args and filters:
+            raise ValueError("Both args or filters were passed!")
         try:
-            return self.get(**filters)[0]
+            return self.get(*args, **filters)[0]
         except IndexError:
             return None
 
