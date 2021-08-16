@@ -3,6 +3,10 @@ from replit import Database as rdb
 
 db = Database(rdb())
 
+def test_drop_all_iter():
+    for i in db:
+        i.drop()
+    assert [i for i in db] == []
 
 def test_get_table():
     table = db["newtesttable"]

@@ -6,6 +6,9 @@ class Database:
     def __init__(self, database: rdb):
         self._db = database
 
+    def __iter__(self):
+        return (self[table] for table in self._db.keys())
+
     def __setitem__(self, name: str, value) -> None:
         self._db[name] = value
 
