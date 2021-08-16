@@ -1,11 +1,11 @@
 [tool.poetry]
 name = "repltable"
-version = "0.1.4"
+version = "0.1.7"
 description = "Table support for the replit database"
 authors = ["terabyte. <mikey@mikeyo.ml>"]
 readme = "README.md"
 repository = "https://github.com/terabyte3/repltable"
-keywords = ["replit", "database", "table", "nosql"]
+keywords = ["replit", "database", "table", "nosql", "db", "datastore"]
 classifiers = [
     "Topic :: Database",   
 ]
@@ -21,11 +21,6 @@ replit = "^3.2.1"
 pytest = "^5.2"
 black = "^21.7b0"
 bandit = "^1.7.0"
-sphinx-autoapi = "^1.8.2"
-furo = "^2021.7.28-beta.40"
-Sphinx = "^4.1.2"
-pytest-sugar = "^0.9.4"
-numpydoc = "^1.1.0"
 mypy = "^0.910"
 
 [build-system]
