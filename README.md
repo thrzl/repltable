@@ -21,7 +21,7 @@ database = repltable.Database(db)
 
 # repltable databases work like a dictionary
 database['table'].get(foo='bar')
->>> [{'foo': 'bar'}, {'foo': 'baz'}]
+>>> [{'foo': 'bar'}]
 
 # repltable auto-creates tables if they don't exist
 table = database['nonexistenttable']
