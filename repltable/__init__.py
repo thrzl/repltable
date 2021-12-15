@@ -1,2 +1,2 @@
-__version__ = "0.1.0"
-from .database import Database, Table
+__version__ = "1.1.0"
+from .database import ReplTable, Table, AsyncReplTable, AsyncTable
