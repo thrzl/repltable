@@ -1,11 +1,15 @@
 from repltable import ReplTable, Table
 
-db = ReplTable("https://kv.replit.com/v0/eyJhbGciOiJIUzUxMiIsImtpZCI6InByaW1hcnktMjAyMS0wOS0yNSIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJjb25tYW4iLCJleHAiOjE2MzM4NTkxOTUsImlhdCI6MTYzMzc0NzU5NSwiZGF0YWJhc2VfaWQiOiJhNTgyY2MxZS03MmZhLTRiYTktYmE4YS1lMDEzMWJlYTM1NTMifQ.eqocDVtGo2rBRHLVsFzERRPu1ESvZwhO4KqeFIlT-5nQTTWJUOnpgIgknusVdTfLFkErg7yE84gz0TCr1S6T-A")
+db = ReplTable(
+    "https://kv.replit.com/v0/eyJhbGciOiJIUzUxMiIsImtpZCI6InByaW1hcnktMjAyMS0wOS0yNSIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJjb25tYW4iLCJleHAiOjE2MzM4NTkxOTUsImlhdCI6MTYzMzc0NzU5NSwiZGF0YWJhc2VfaWQiOiJhNTgyY2MxZS03MmZhLTRiYTktYmE4YS1lMDEzMWJlYTM1NTMifQ.eqocDVtGo2rBRHLVsFzERRPu1ESvZwhO4KqeFIlT-5nQTTWJUOnpgIgknusVdTfLFkErg7yE84gz0TCr1S6T-A"
+)
+
 
 def test_drop_all_iter():
     for i in db:
         i.drop()
     assert [i for i in db] == []
+
 
 def test_get_table():
     table = db["newtesttable"]
@@ -39,11 +43,11 @@ def test_set_get():
         and (table.get(id=2131))[0]["name"] == "test2"
     )
     assert table.get_one(id=2131)["name"] == "test2"
-    table.insert(dict(name="foo", value='bar'))
-    table.insert(dict(name="bar", value='baz'))
-    table.insert(dict(foo="bar", flob='baz'))
-    print(table.get_one('bar'))
-    assert len(table.get_one('bar')) == 2
+    table.insert(dict(name="foo", value="bar"))
+    table.insert(dict(name="bar", value="baz"))
+    table.insert(dict(foo="bar", flob="baz"))
+    print(table.get_one("bar"))
+    assert len(table.get_one("bar")) == 2
 
 
 def test_drop_table_with_data():
@@ -61,6 +65,7 @@ def test_delete():
     table.delete(id=2131)
     assert not table.get(id=2131)
 
+
 def drop_table_from_db():
-    db.drop('things')
-    assert getattr(db, 'things', None) is None
+    db.drop("things")
+    assert getattr(db, "things", None) is None

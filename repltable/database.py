@@ -79,12 +79,11 @@ class Table:
         self.db[self.name] = self._documents
 
     def __remove_duplicates(self, data: List[dict]):
-        l = [] # type: List[dict]
+        l = []  # type: List[dict]
         for i in data:
             if i not in l:
                 l.append(i)
         return l
-
 
     def get(self, *text, **filters):
         """Gets all documents matching the given query.
@@ -141,6 +140,7 @@ class Table:
         """Delete the current table."""
         delattr(self.db, self.name)
 
+
 class AsyncReplTable:
     def __init__(self, db_url: str, cache={}):
         self._cache = cache
@@ -156,7 +156,7 @@ class AsyncReplTable:
         if key not in self._cache:
             self._cache[key] = await self._db.get(key)
         return AsyncTable(self._cache[key], self, key)
-            
+
     async def drop(self, table: str):
         """Drops a table from the database.
 
@@ -167,6 +167,7 @@ class AsyncReplTable:
         """
         if table in self._db.keys():
             await self._db.delete(table)
+
 
 class AsyncTable(Table):
     def __init__(self, docs: List[dict], db: AsyncReplTable, name: str):
@@ -182,7 +183,7 @@ class AsyncTable(Table):
     async def __update_changes(self):
         await self.db.set(self.name, self._documents)
         self.db._cache[self.name] = self._documents
-    
+
     async def delete(self, **filters):
         """Delete an existing document in the table.
 
@@ -263,5 +264,3 @@ class AsyncTable(Table):
         """
         self._documents.append(data)
         await self.__update_changes()
-
-    
