@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "repltable"
-version = "1.1.1"
+version = "1.2.0"
 description = "Table support for the replit database"
 authors = ["terabyte. <terabyte@terabyteis.me>"]
 readme = "README.md"
@@ -15,7 +15,12 @@ packages = [
 
 [tool.poetry.dependencies]
 python = "^3.8"
-replit = "^3.2.1"
+urllib3 = "^1.26.9"
+aiohttp = {version="^3.8.1", optional = true}
+cachetools = "^5.1.0"
+
+[tool.poetry.extras]
+async = ["aiohttp"]
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"
