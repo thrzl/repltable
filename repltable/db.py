@@ -1,19 +1,21 @@
-from urllib3 import PoolManager, encode_multipart_formdata
+from urllib3 import HTTPConnectionPool
 from urllib3.response import HTTPResponse
-from typing import Any, List, Optional
+from typing import Any, Dict, List, Optional
 from orjson import loads, dumps
 from os import environ
 
 
-class RadReplitDB:
+class Database:
     __slots__ = (
         "http",
-        "db_url"
+        "db_url",
+        "_cache"
     )
     def __init__(self, db_url: Optional[str] = None):
         self.db_url = db_url or environ.get("REPLIT_DB_URL")
         if not self.db_url: raise ValueError("No db_url passed, and REPLIT_DB_URL wasn't found in env vars!")
-        self.http = PoolManager()
+        self.http = HTTPConnectionPool("kv.replit.com", maxsize=10)
+        self._cache: Dict[str, str] = {}
 
     def req(
         self,
@@ -27,11 +29,13 @@ class RadReplitDB:
         )
 
     def list_keys(self) -> List[str]:
-        return str(self.req(path="?prefix=").data, 'utf-8').splitlines()
+        return self.req(path="?prefix=").data.decode().splitlines()
 
     def get(self, name: str):
+        if name in self._cache:
+            return self._cache[name]
         res = self.req(path=f"/{name}")
-        r = res.data.decode('utf-8')
+        r = res.data.decode()
         if res.status == 404: return None
         try:
             return loads(r)
@@ -40,6 +44,8 @@ class RadReplitDB:
 
     def set(self, name: str, value: Any):
         self.req("POST", "/", body=dumps({name: value}), headers={'Content-Type': "application/json"})
+        self._cache[name] = value
 
     def delete(self, name: str):
         self.req("DELETE", f"/{name}")
+        del self._cache[name]
