@@ -1,11 +1,9 @@
 from typing import Dict, Union, List, Optional
-from .db import RadReplitDB
-from orjson import loads
+from .db import Database
 from .util import filter_list, remove_duplicates
-from icecream import ic
 
 
-class Database:
+class TableDatabase:
     __slots__ = (
         "db",
         "db_url",
@@ -14,7 +12,7 @@ class Database:
     def __init__(
         self, db_url: Optional[str] = None, table_cachesize: int = 25
     ):
-        self.db = RadReplitDB(db_url)
+        self.db = Database(db_url)
         self.db_url = db_url
         self._tcsize = table_cachesize
 
@@ -49,7 +47,7 @@ class Table:
 
     def __init__(
         self,
-        db: RadReplitDB,
+        db: Database,
         name: str,
         data: List[Dict[str, Union[str, int]]],
         cachesize: int,
