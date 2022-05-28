@@ -1,14 +1,12 @@
-from repltable import ReplTable, Table
+from repltable import Database
 
-db = ReplTable(
-    "https://kv.replit.com/v0/eyJhbGciOiJIUzUxMiIsImtpZCI6InByaW1hcnktMjAyMS0wOS0yNSIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJjb25tYW4iLCJleHAiOjE2MzM4NTkxOTUsImlhdCI6MTYzMzc0NzU5NSwiZGF0YWJhc2VfaWQiOiJhNTgyY2MxZS03MmZhLTRiYTktYmE4YS1lMDEzMWJlYTM1NTMifQ.eqocDVtGo2rBRHLVsFzERRPu1ESvZwhO4KqeFIlT-5nQTTWJUOnpgIgknusVdTfLFkErg7yE84gz0TCr1S6T-A"
-)
+db = Database()
 
 
 def test_drop_all_iter():
     for i in db:
         i.drop()
-    assert [i for i in db] == []
+    assert db.tables() == []
 
 
 def test_get_table():
