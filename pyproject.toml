@@ -16,11 +16,7 @@ packages = [
 [tool.poetry.dependencies]
 python = "^3.8"
 urllib3 = "^1.26.9"
-aiohttp = {version="^3.8.1", optional = true}
 orjson = "^3.6.8"
-
-[tool.poetry.extras]
-async = ["aiohttp"]
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"
