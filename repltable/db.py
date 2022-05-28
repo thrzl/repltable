@@ -1,4 +1,4 @@
-from urllib3 import HTTPConnectionPool
+from urllib3 import PoolManager
 from urllib3.response import HTTPResponse
 from typing import Any, Dict, List, Optional
 from orjson import loads, dumps
@@ -14,7 +14,7 @@ class Database:
     def __init__(self, db_url: Optional[str] = None):
         self.db_url = db_url or environ.get("REPLIT_DB_URL")
         if not self.db_url: raise ValueError("No db_url passed, and REPLIT_DB_URL wasn't found in env vars!")
-        self.http = HTTPConnectionPool("kv.replit.com", maxsize=10)
+        self.http = PoolManager()
         self._cache: Dict[str, str] = {}
 
     def req(
@@ -35,8 +35,8 @@ class Database:
         if name in self._cache:
             return self._cache[name]
         res = self.req(path=f"/{name}")
-        r = res.data.decode()
         if res.status == 404: return None
+        r = res.data.decode()
         try:
             return loads(r)
         except:
