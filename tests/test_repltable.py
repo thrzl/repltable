@@ -1,9 +1,9 @@
-from repltable import Database, Table
+from repltable import TableDatabase, Table
 from dotenv import load_dotenv
 
 load_dotenv(".env.local")
 
-db = Database()
+db = TableDatabase()
 
 
 def test_drop_all_iter():
