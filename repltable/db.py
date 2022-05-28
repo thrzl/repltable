@@ -1,7 +1,8 @@
-from urllib3 import PoolManager
+from urllib3 import PoolManager, encode_multipart_formdata
 from urllib3.response import HTTPResponse
-from typing import Any, List, Union
-from orjson import loads
+from typing import Any, List, Optional
+from orjson import loads, dumps
+from os import environ
 
 
 class RadReplitDB:
@@ -9,9 +10,10 @@ class RadReplitDB:
         "http",
         "db_url"
     )
-    def __init__(self, db_url: str):
+    def __init__(self, db_url: Optional[str] = None):
+        self.db_url = db_url or environ.get("REPLIT_DB_URL")
+        if not self.db_url: raise ValueError("No db_url passed, and REPLIT_DB_URL wasn't found in env vars!")
         self.http = PoolManager()
-        self.db_url = db_url
 
     def req(
         self,
@@ -20,7 +22,7 @@ class RadReplitDB:
         fields: dict = {},
         **kwargs
     ) -> HTTPResponse:
-        return self.http.request(
+        return self.http.request_encode_body(
             method, f"{self.db_url}{path}", fields=fields, **kwargs
         )
 
@@ -37,7 +39,7 @@ class RadReplitDB:
             return r
 
     def set(self, name: str, value: Any):
-        self.req("POST", "/{name}={value}", body=f"{name}={value}")
+        self.req("POST", "/", body=dumps({name: value}), headers={'Content-Type': "application/json"})
 
     def delete(self, name: str):
         self.req("DELETE", f"/{name}")

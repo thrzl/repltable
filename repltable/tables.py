@@ -1,9 +1,8 @@
-from typing import Dict, Union, List
-from cachetools import cached, TTLCache, LRUCache
+from typing import Dict, Union, List, Optional
 from .db import RadReplitDB
-from os import environ
 from orjson import loads
 from .util import filter_list, remove_duplicates
+from icecream import ic
 
 
 class Database:
@@ -13,25 +12,28 @@ class Database:
         "_tcsize"
     )
     def __init__(
-        self, db_url: str = environ["REPLIT_DB_URL"], table_cachesize: int = 25
+        self, db_url: Optional[str] = None, table_cachesize: int = 25
     ):
         self.db = RadReplitDB(db_url)
         self.db_url = db_url
         self._tcsize = table_cachesize
+
+    def __iter__(self):
+        return (i for i in self.tables())
 
     def __getitem__(self, name: str):
         return self.get(name)
 
     def get(self, name: str):
         if name not in self.tables():
-            self.db.set_key(name, {})
-        return Table(self.db, name, loads(self.db.get(name)), self._tcsize)
+            self.db.set(name, {})
+        return Table(self.db, name, self.db.get(name) or [], self._tcsize)
 
     def tables(self):
         return self.db.list_keys()
 
     def drop(self, name: str):
-        return self.db.del_key(name)
+        return self.db.delete(name)
 
 
 class Table:
@@ -52,16 +54,16 @@ class Table:
         data: List[Dict[str, Union[str, int]]],
         cachesize: int,
     ):
-        self._cache: LRUCache[str, str] = LRUCache(cachesize)
         self.db = db
         self.name = name
         self.data = data
 
     def __on_mutate(self):
-        self.db.set_key(self.name, self.data)
+        self.db.set(self.name, self.data)
 
     def delete(self, **filters):
         """Delete an existing document in the table.
+
         Parameters
         ----------
         **filters
@@ -102,7 +104,7 @@ class Table:
                     if query in tuple(doc.keys()) + tuple(doc.values()):
                         l.append(doc)
 
-        if not text or filters:
+        if not (text or filters):
             return self.data
         return remove_duplicates(l)
 
@@ -134,4 +136,4 @@ class Table:
 
     def drop(self):
         """Delete the current table."""
-        self.db.del_key(self.name)
+        self.db.delete(self.name)
