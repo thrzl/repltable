@@ -1,11 +1,14 @@
-from repltable import Database
+from repltable import Database, Table
+from dotenv import load_dotenv
+
+load_dotenv(".env.local")
 
 db = Database()
 
 
 def test_drop_all_iter():
     for i in db:
-        i.drop()
+        db.drop(i)
     assert db.tables() == []
 
 
