@@ -347,13 +347,10 @@ category = "dev"
 optional = false
 python-versions = "*"
 
-[extras]
-async = []
-
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "154fd0dff9c7047d1cbe8cfc921af7dd524be06c7ff1a83fdc50bef3e360c2bf"
+content-hash = "0f756cbc3d8e04627f830d1cb561ec3a4ab4eec379431854447fe827e54e4678"
 
 [metadata.files]
 atomicwrites = [

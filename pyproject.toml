@@ -1,11 +1,11 @@
 [tool.poetry]
 name = "repltable"
-version = "1.2.0"
-description = "Table support for the replit database"
+version = "3.0.0"
+description = "a better replit database for python"
 authors = ["terabyte. <terabyte@terabyteis.me>"]
 readme = "README.md"
 repository = "https://github.com/terabyte3/repltable"
-keywords = ["replit", "database", "table", "nosql", "db", "datastore", "repl", "repl.it"]
+keywords = ["replit", "database", "table", "nosql", "db", "datastore", "repl", "repl.it", "replit-py"]
 classifiers = [
     "Topic :: Database",   
 ]
@@ -15,8 +15,8 @@ packages = [
 
 [tool.poetry.dependencies]
 python = "^3.8"
-urllib3 = "^1.26.9"
 orjson = "^3.6.8"
+urllib3 = "^1.26.9"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"
