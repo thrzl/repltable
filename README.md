@@ -1,6 +1,5 @@
 <center>
     <h1>repltable</h1>
-    install](#⚙️-installation)
 </center>
 
 ![PyPI - Downloads](https://img.shields.io/pypi/dm/repltable?style=for-the-badge)
