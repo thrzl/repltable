@@ -1,7 +1,5 @@
-<center>
-    <h1>repltable</h1>
-</center>
-
+![image](https://user-images.githubusercontent.com/73202594/190297553-a53dde72-e981-4a7a-8fb3-2b6face1b0da.png)
+---
 ![PyPI - Downloads](https://img.shields.io/pypi/dm/repltable?style=for-the-badge)
 ![code style](https://img.shields.io/badge/code%20style-black-black?style=for-the-badge&logo=python)
 
