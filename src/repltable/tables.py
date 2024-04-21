@@ -1,17 +1,12 @@
-from typing import Dict, Union, List, Optional
+from typing import Dict, List, Optional, Any
 from .db import Database
-from .util import filter_list, remove_duplicates
+from .util import filter_list
 
 
 class TableDatabase:
-    __slots__ = (
-        "db",
-        "db_url",
-        "_tcsize"
-    )
-    def __init__(
-        self, db_url: Optional[str] = None, table_cachesize: int = 25
-    ):
+    __slots__ = ("db", "db_url", "_tcsize")
+
+    def __init__(self, db_url: Optional[str] = None, table_cachesize: int = 25):
         self.db = Database(db_url)
         self.db_url = db_url
         self._tcsize = table_cachesize
@@ -25,7 +20,8 @@ class TableDatabase:
     def get(self, name: str):
         if name not in self.tables():
             self.db.set(name, {})
-        return Table(self.db, name, self.db.get(name) or [], self._tcsize)
+        items: List[Dict[str, Any]] = self.db.get(name)  # type: ignore
+        return Table(self.db, name, items or [])
 
     def tables(self):
         return self.db.list_keys()
@@ -35,12 +31,7 @@ class TableDatabase:
 
 
 class Table:
-    __slots__ = (
-        "_cache",
-        "db",
-        "name",
-        "data"
-    )
+    __slots__ = ("_cache", "db", "name", "data")
     """An object representing a table in the database.
     You should not need to create an instance of this class yourself.
     """
@@ -49,8 +40,7 @@ class Table:
         self,
         db: Database,
         name: str,
-        data: List[Dict[str, Union[str, int]]],
-        cachesize: int,
+        data: List[Dict[str, Any]],
     ):
         self.db = db
         self.name = name
@@ -67,14 +57,16 @@ class Table:
         **filters
             Filters that the document must match.
         """
-        for index, doc in enumerate(self.data):
-            for query in filters:
-                if doc.get(query, False):
-                    del self.data[index]
+        self.data = [
+            doc
+            for doc in self.data
+            if not any(doc.get(query, False) for query in filters)
+        ]
         self.__on_mutate()
 
     def update(self, data: dict, **filters):
         """Update an existing document in the table.
+
         Parameters
         ----------
         data : dict
@@ -86,6 +78,7 @@ class Table:
             for query in filters:
                 if doc.get(query, False):
                     self.data[index] = data
+
         self.__on_mutate()
 
     def get(self, *text, **filters):
@@ -95,16 +88,11 @@ class Table:
         list[dict]
             Returns a list of documents matching the given query.
         """
-        l = filter_list(self.data, **filters)
-        if text:
-            for query in text:
-                for doc in self.data:
-                    if query in tuple(doc.keys()) + tuple(doc.values()):
-                        l.append(doc)
+        filtered = filter_list(self.data, **filters)
 
         if not (text or filters):
             return self.data
-        return remove_duplicates(l)
+        return filtered
 
     def get_one(self, *args, **filters):
         """Gets the first document matching the given query.
@@ -127,7 +115,7 @@ class Table:
         data : dict
             A dictionary containing the data to insert.
         """
-        if type(data) != dict:
+        if not isinstance(data, dict):
             raise TypeError("Data is not a dict object")
         self.data.append(data)
         self.__on_mutate()

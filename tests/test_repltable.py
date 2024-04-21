@@ -1,9 +1,14 @@
-from repltable import TableDatabase, Table
+from repltable import TableDatabase, Table  # type: ignore
 from dotenv import load_dotenv
+from os import environ
+import pytest
 
 load_dotenv(".env.local")
 
-db = TableDatabase()
+if not environ.get("REPLIT_DB_URL"):
+    pytest.exit("REPLIT_DB_URL not found.")
+
+db = TableDatabase(db_url=environ["REPLIT_DB_URL"])
 
 
 def test_drop_all_iter():
@@ -47,7 +52,6 @@ def test_set_get():
     table.insert(dict(name="foo", value="bar"))
     table.insert(dict(name="bar", value="baz"))
     table.insert(dict(foo="bar", flob="baz"))
-    print(table.get_one("bar"))
     assert len(table.get_one("bar")) == 2
 
 
