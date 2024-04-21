@@ -57,7 +57,9 @@ class Database:
         """
         return (await self.http.get(f"?prefix={prefix}")).text.splitlines()
 
-    async def get(self, key: str) -> Union[Dict[str, Any], str, List[Dict[str, Any]], None]:
+    async def get(
+        self, key: str
+    ) -> Union[Dict[str, Any], str, List[Dict[str, Any]], None]:
         """Get a value from the database.
 
         Args:
@@ -229,7 +231,7 @@ class Table:
             dict: The document found.
         """
         try:
-            return (await self.get(**filters))[0] # type: ignore
+            return (await self.get(**filters))[0]  # type: ignore
         except IndexError:
             return None
 

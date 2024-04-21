@@ -62,7 +62,11 @@ def test_set_get():
     table.insert(dict(name="bar", value="baz"))
     table.insert(dict(foo="bar", flob="baz"))
     test_item = table.get_one(foo="bar")
-    assert len(test_item.keys()) == 2 and test_item["foo"] == "bar" and test_item["flob"] == "baz"
+    assert (
+        len(test_item.keys()) == 2
+        and test_item["foo"] == "bar"
+        and test_item["flob"] == "baz"
+    )
 
 
 def test_drop_table_with_data():

@@ -1,5 +1,5 @@
 from timeit import timeit
-from repltable import Database # type: ignore
+from repltable import Database  # type: ignore
 
 
 db = Database()

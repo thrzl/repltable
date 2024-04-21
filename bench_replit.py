@@ -1,4 +1,4 @@
-from replit import db, Database # type: ignore
+from replit import db, Database  # type: ignore
 from timeit import timeit
 
 db: Database = db

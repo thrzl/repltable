@@ -32,9 +32,9 @@ class Database:
             )
         self.http = Client(base_url=self.db_url)
         self._cache: MutableMapping[str, Any] = cache or {}
-    
+
     def populate_cache(self) -> None:
-        """Entirely populate the cache with all the keys in the database."""        
+        """Entirely populate the cache with all the keys in the database."""
         for key in self.keys():
             self._cache[key] = self.get(key)
 
