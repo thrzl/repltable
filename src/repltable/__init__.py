@@ -1,8 +1,6 @@
 __version__ = "3.0.0"
-from .db import Database
-from .tables import Table, TableDatabase
+from .db import Database, Table
 
 db = Database()
-# AsyncReplTable, AsyncTable
 
-__all__ = ["Database", "Table", "TableDatabase"]
+__all__ = ["Database", "Table"]
