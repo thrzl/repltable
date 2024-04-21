@@ -1,6 +1,7 @@
-from replit import db
+from replit import db, Database
 from timeit import timeit
 
+db: Database = db
 db.set("test", "item")
 
 
