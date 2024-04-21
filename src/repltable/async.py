@@ -1,5 +1,5 @@
 from __future__ import annotations
-from httpx import Client, Response
+from httpx import AsyncClient, Response
 from json import JSONDecodeError
 from typing import Any, Dict, List, Optional, Union
 from os import environ
@@ -30,16 +30,15 @@ class Database:
             raise ValueError(
                 "No db_url passed, and REPLIT_DB_URL wasn't found in env vars!"
             )
-        self.http = Client(base_url=self.db_url)
+        self.http = AsyncClient(base_url=self.db_url)
         self._cache: MutableMapping[str, Any] = cache or {}
-    
-    def populate_cache(self) -> None:
-        """Entirely populate the cache with all the keys in the database."""        
-        for key in self.keys():
-            self._cache[key] = self.get(key)
-            
 
-    def req(
+    async def populate_cache(self):
+        """Entirely populate the cache with all the keys in the database."""
+        for key in await self.keys():
+            self._cache[key] = await self.get(key)
+
+    async def req(
         self,
         method: str = "GET",
         path: str = "",
@@ -58,19 +57,19 @@ class Database:
         Returns:
             Response: The returned HTTP response.
         """
-        return self.http.request(
+        return await self.http.request(
             method=method, url=path, json=json, headers=headers, **kwargs
         )
 
-    def keys(self) -> List[str]:
+    async def keys(self) -> List[str]:
         """List all the keys in the database.
 
         Returns:
             List[str]: Every key in the database.
         """
-        return self.prefix("")
+        return await self.prefix("")
 
-    def prefix(self, prefix: str) -> List[str]:
+    async def prefix(self, prefix: str) -> List[str]:
         """List all the keys in the database that start with a certain prefix.
 
         Args:
@@ -79,9 +78,9 @@ class Database:
         Returns:
             List[str]: Every key in the database that starts with the prefix.
         """
-        return self.req(path=f"?prefix={prefix}").text.splitlines()
+        return (await self.req(path=f"?prefix={prefix}")).text.splitlines()
 
-    def get(self, key: str) -> Union[Dict[str, Any], str, List[Dict[str, Any]], None]:
+    async def get(self, key: str) -> Union[Dict[str, Any], str, List[Dict[str, Any]], None]:
         """Get a value from the database.
 
         Args:
@@ -92,7 +91,7 @@ class Database:
         """
         if key in self._cache:
             return self._cache[key]
-        res = self.req(path=f"/{key}")
+        res = await self.req(path=f"/{key}")
         if res.status_code == 404:
             return None
         try:
@@ -101,22 +100,22 @@ class Database:
             r = res.text
         return r
 
-    def set(self, key: str, value: Any):
+    async def set(self, key: str, value: Any):
         """Set a value in the database.
 
         Args:
             name (str): the key to set in the database.
             value (Any): the value to set in the database.
         """
-        self.set_bulk({key: value})
+        await self.set_bulk({key: value})
 
-    def set_bulk(self, data: Dict[str, Any]):
+    async def set_bulk(self, data: Dict[str, Any]):
         """Set multiple values in the database.
 
         Args:
             data (Dict[str, Any]): the data to set in the database.
         """
-        self.req(
+        await self.req(
             "POST",
             "/",
             json=str(data),
@@ -124,16 +123,16 @@ class Database:
         )
         self._cache.update(data)
 
-    def delete(self, key: str):
+    async def delete(self, key: str):
         """Delete a key from the database.
 
         Args:
             key (str): the key to delete from the database.
         """
-        self.req("DELETE", f"/{key}")
+        await self.req("DELETE", f"/{key}")
         del self._cache[key]
 
-    def get_table(self, table: str) -> Table:
+    async def get_table(self, table: str) -> Table:
         """Get a table from the database.
 
         Args:
@@ -145,10 +144,10 @@ class Database:
         Returns:
             List[Dict[str, Any]]: the table from the database.
         """
-        if table not in self.keys():
-            self.set(table, [])
+        if table not in await self.keys():
+            await self.set(table, [])
 
-        data = self.get(table)
+        data = await self.get(table)
         if isinstance(data, list):
             for i in data:
                 if not isinstance(i, dict):
@@ -158,26 +157,26 @@ class Database:
 
         return Table(self, table, data or [])
 
-    def list_tables(self) -> List[str]:
+    async def list_tables(self) -> List[str]:
         """List all the tables from the database.
 
         Returns:
             List[str]: all the tables from the database.
         """
         data: List[str] = []
-        keys = self.keys()
+        keys = await self.keys()
         for key in keys:
             if isinstance(key, list):
-                for value in self.get(key):
+                for value in await self.get(key):
                     if not isinstance(value, dict):
                         break
                 data.append(key)
 
         return data
 
-    def close(self):
+    async def close(self):
         """Close the database connection."""
-        self.http.close()
+        await self.http.aclose()
 
 
 class Table:
@@ -196,10 +195,10 @@ class Table:
         self.name = name
         self.data = data
 
-    def __on_mutate(self):
-        self.db.set(self.name, self.data)
+    async def __on_mutate(self):
+        await self.db.set(self.name, self.data)
 
-    def delete(self, **filters) -> None:
+    async def delete(self, **filters) -> None:
         """Delete an existing document in the table.
 
         Args:
@@ -210,9 +209,9 @@ class Table:
             for doc in self.data
             if not any(doc.get(query, False) for query in filters)
         ]
-        self.__on_mutate()
+        await self.__on_mutate()
 
-    def update(self, data: dict, **filters) -> None:
+    async def update(self, data: dict, **filters) -> None:
         """Update an existing document in the table.
 
         Args:
@@ -224,9 +223,9 @@ class Table:
                 if doc.get(query, False):
                     self.data[index] = data
 
-        self.__on_mutate()
+        await self.__on_mutate()
 
-    def get(self, *text, **filters) -> Optional[List[dict]]:
+    async def get(self, *text, **filters) -> Optional[List[dict]]:
         """Gets all documents matching the given query.
 
         Args:
@@ -242,7 +241,7 @@ class Table:
             return self.data
         return filtered
 
-    def get_one(self, *args, **filters):
+    async def get_one(self, *args, **filters) -> Optional[List[dict]]:
         """Gets the first document matching the given query.
 
         Args:
@@ -255,11 +254,11 @@ class Table:
         if args and filters:
             raise ValueError("Both args or filters were passed!")
         try:
-            return self.get(*args, **filters)[0]
+            return (await self.get(*args, **filters))[0] # type: ignore
         except IndexError:
             return None
 
-    def insert(self, data: dict) -> None:
+    async def insert(self, data: dict) -> None:
         """Insert a new document into the table.
 
         Args:
@@ -268,4 +267,4 @@ class Table:
         if not isinstance(data, dict):
             raise TypeError("Data is not a dict object")
         self.data.append(data)
-        self.__on_mutate()
+        await self.__on_mutate()
