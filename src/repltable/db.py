@@ -35,7 +35,7 @@ class Database:
 
         Returns:
             Response: The returned HTTP response.
-        """        
+        """
         return self.http.request(
             method=method, url=path, json=json, headers=headers, **kwargs
         )
@@ -45,7 +45,7 @@ class Database:
 
         Returns:
             List[str]: Every key in the database.
-        """        
+        """
         return self.req(path="?prefix=").text.splitlines()
 
     def get(self, key: str) -> Union[Dict[str, Any], str, List[Dict[str, Any]], None]:
@@ -56,7 +56,7 @@ class Database:
 
         Returns:
             Union[Dict[str, Any], str, List[Dict[str, Any]], None]: Either a dictionary, string, list of dictionaries, or None.
-        """        
+        """
         if key in self._cache:
             return self._cache[key]
         res = self.req(path=f"/{key}")
@@ -74,7 +74,7 @@ class Database:
         Args:
             name (str): the key to set in the database.
             value (Any): the value to set in the database.
-        """        
+        """
         self.req(
             "POST",
             "/",
@@ -88,6 +88,52 @@ class Database:
 
         Args:
             key (str): the key to delete from the database.
-        """        
+        """
         self.req("DELETE", f"/{key}")
         del self._cache[key]
+
+    def get_table(self, table: str) -> List[Dict[str, Any]]:
+        """Get a table from the database.
+
+        Args:
+            table (str): the table to get from the database.
+
+        Raises:
+            ValueError: if the table is not a valid table.
+
+        Returns:
+            List[Dict[str, Any]]: the table from the database.
+        """
+        if table not in self.list_keys():
+            self.set(table, [])
+
+        data = self.get(table)
+        if isinstance(data, list):
+            for i in data:
+                if not isinstance(i, dict):
+                    raise ValueError(f"`{table}` is not a valid table.")
+        else:
+            raise ValueError(f"`{table}` is not a valid table.")
+
+        return data or []
+
+    def drop_table(self, table: str):
+        """Drop a table from the database."""
+        return self.delete(table)
+
+    def list_tables(self) -> List[str]:
+        """List all the tables from the database.
+
+        Returns:
+            List[str]: all the tables from the database.
+        """
+        data: List[str] = []
+        keys = self.list_keys()
+        for key in keys:
+            if isinstance(key, list):
+                for value in self.get(key):
+                    if not isinstance(value, dict):
+                        break
+                data.append(key)
+
+        return data

@@ -2,6 +2,7 @@ from typing import Dict, List, Optional, Any
 from .db import Database
 from .util import filter_list
 
+
 class Table:
     __slots__ = ("_cache", "db", "name", "data")
     """An object representing a table in the database.
@@ -26,7 +27,7 @@ class Table:
 
         Args:
             **filters: Filters that the document must match.
-        """        
+        """
         self.data = [
             doc
             for doc in self.data
@@ -54,7 +55,7 @@ class Table:
         Args:
             *text: The text to search for in the documents.
             **filters: Filters that the document must match.
-        
+
         Returns:
             List[dict]: Returns a list of documents matching the given query.
         """
@@ -70,7 +71,7 @@ class Table:
         Args:
             *args: The text to search for in the documents.
             **filters: Filters that the document must match.
-        
+
         Returns:
             dict: The document found.
         """
@@ -83,7 +84,7 @@ class Table:
 
     def insert(self, data: dict) -> None:
         """Insert a new document into the table.
-        
+
         Args:
             data (dict): The data to insert.
         """
@@ -95,6 +96,7 @@ class Table:
     def drop(self) -> None:
         """Delete the current table."""
         self.db.delete(self.name)
+
 
 class TableDatabase:
     __slots__ = ("db", "db_url", "_tcsize")
@@ -118,7 +120,7 @@ class TableDatabase:
 
         Returns:
             Table: the table object.
-        """        
+        """
         if key not in self.tables():
             self.db.set(key, {})
         items: List[Dict[str, Any]] = self.db.get(key)  # type: ignore
@@ -129,5 +131,3 @@ class TableDatabase:
 
     def drop(self, name: str):
         return self.db.delete(name)
-
-

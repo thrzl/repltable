@@ -3,6 +3,7 @@ from timeit import timeit
 
 db.set("test", "item")
 
+
 def bench_replit():
     db.get("test")
 

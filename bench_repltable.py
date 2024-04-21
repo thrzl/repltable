@@ -3,6 +3,7 @@ from repltable import db
 
 db.set("test", "item")
 
+
 def bench_repltable():
     db.get("test")
 
