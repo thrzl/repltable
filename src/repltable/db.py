@@ -25,17 +25,41 @@ class Database:
         json: Optional[str] = None,
         **kwargs,
     ) -> Response:
+        """Underlying request method. The client's base url is set to `db_url`.
+
+        Args:
+            method (str, optional): The HTTP method to use. Defaults to "GET".
+            path (str, optional): The path to send a request to. Defaults to "".
+            headers (Dict[str, str], optional): The headers to include with the request. Defaults to {}.
+            json (Optional[str], optional): the JSON body to send with the request. Defaults to None.
+
+        Returns:
+            Response: The returned HTTP response.
+        """        
         return self.http.request(
             method=method, url=path, json=json, headers=headers, **kwargs
         )
 
     def list_keys(self) -> List[str]:
+        """List all the keys in the database.
+
+        Returns:
+            List[str]: Every key in the database.
+        """        
         return self.req(path="?prefix=").text.splitlines()
 
-    def get(self, name: str) -> Union[Dict[str, Any], str, List[Dict[str, Any]], None]:
-        if name in self._cache:
-            return self._cache[name]
-        res = self.req(path=f"/{name}")
+    def get(self, key: str) -> Union[Dict[str, Any], str, List[Dict[str, Any]], None]:
+        """Get a value from the database.
+
+        Args:
+            key (str): the key to request from the database.
+
+        Returns:
+            Union[Dict[str, Any], str, List[Dict[str, Any]], None]: Either a dictionary, string, list of dictionaries, or None.
+        """        
+        if key in self._cache:
+            return self._cache[key]
+        res = self.req(path=f"/{key}")
         if res.status_code == 404:
             return None
         try:
@@ -44,15 +68,26 @@ class Database:
             r = res.text
         return r
 
-    def set(self, name: str, value: Any):
+    def set(self, key: str, value: Any):
+        """Set a value in the database.
+
+        Args:
+            name (str): the key to set in the database.
+            value (Any): the value to set in the database.
+        """        
         self.req(
             "POST",
             "/",
-            json=str({name: value}),
+            json=str({key: value}),
             headers={"Content-Type": "application/json"},
         )
-        self._cache[name] = value
+        self._cache[key] = value
 
-    def delete(self, name: str):
-        self.req("DELETE", f"/{name}")
-        del self._cache[name]
+    def delete(self, key: str):
+        """Delete a key from the database.
+
+        Args:
+            key (str): the key to delete from the database.
+        """        
+        self.req("DELETE", f"/{key}")
+        del self._cache[key]
