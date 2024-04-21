@@ -35,7 +35,7 @@ class Database:
         self.http = Client(base_url=self.db_url)
         self._cache: MutableMapping[str, Any] = cache
         if preload_cache:
-            for key in self.list_keys():
+            for key in self.keys():
                 self._cache[key] = self.get(key)
 
     def req(
@@ -61,7 +61,7 @@ class Database:
             method=method, url=path, json=json, headers=headers, **kwargs
         )
 
-    def list_keys(self) -> List[str]:
+    def keys(self) -> List[str]:
         """List all the keys in the database.
 
         Returns:
@@ -144,7 +144,7 @@ class Database:
         Returns:
             List[Dict[str, Any]]: the table from the database.
         """
-        if table not in self.list_keys():
+        if table not in self.keys():
             self.set(table, [])
 
         data = self.get(table)
@@ -164,7 +164,7 @@ class Database:
             List[str]: all the tables from the database.
         """
         data: List[str] = []
-        keys = self.list_keys()
+        keys = self.keys()
         for key in keys:
             if isinstance(key, list):
                 for value in self.get(key):
@@ -174,6 +174,9 @@ class Database:
 
         return data
 
+    def close(self):
+        """Close the database connection."""
+        self.http.close()
 
 class Table:
     __slots__ = ("_cache", "db", "name", "data")

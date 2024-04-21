@@ -12,9 +12,9 @@ db = Database(db_url=environ["REPLIT_DB_URL"])
 
 
 def test_drop_all_iter():
-    for i in db.list_keys():
+    for i in db.keys():
         db.delete(i)
-    assert db.list_keys() == []
+    assert db.keys() == []
 
 
 def test_get_table():
