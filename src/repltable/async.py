@@ -22,8 +22,8 @@ class Database:
 
     def __init__(
         self,
-        db_url: Optional[str],
-        cache: Optional[MutableMapping],
+        db_url: Optional[str] = None,
+        cache: Optional[MutableMapping] = None,
     ):
         self.db_url = db_url or environ.get("REPLIT_DB_URL")
         if not self.db_url:
@@ -225,7 +225,7 @@ class Table:
 
         await self.__on_mutate()
 
-    async def get(self, *text, **filters) -> Optional[List[dict]]:
+    async def get(self, **filters) -> Optional[List[dict]]:
         """Gets all documents matching the given query.
 
         Args:
@@ -237,11 +237,11 @@ class Table:
         """
         filtered = filter_list(self.data, **filters)
 
-        if not (text or filters):
+        if not filters:
             return self.data
         return filtered
 
-    async def get_one(self, *args, **filters) -> Optional[List[dict]]:
+    async def get_one(self, **filters) -> Optional[List[dict]]:
         """Gets the first document matching the given query.
 
         Args:
@@ -251,10 +251,8 @@ class Table:
         Returns:
             dict: The document found.
         """
-        if args and filters:
-            raise ValueError("Both args or filters were passed!")
         try:
-            return (await self.get(*args, **filters))[0] # type: ignore
+            return (await self.get(**filters))[0] # type: ignore
         except IndexError:
             return None
 

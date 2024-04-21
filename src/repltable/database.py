@@ -22,8 +22,8 @@ class Database:
 
     def __init__(
         self,
-        db_url: Optional[str],
-        cache: Optional[MutableMapping],
+        db_url: Optional[str] = None,
+        cache: Optional[MutableMapping] = None,
     ):
         self.db_url = db_url or environ.get("REPLIT_DB_URL")
         if not self.db_url:
