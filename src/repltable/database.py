@@ -35,9 +35,12 @@ class Database:
 
     def __getitem__(self, key: str) -> Any:
         return self.get(key)
-    
+
     def __setitem__(self, key: str, value: Any) -> None:
         self.set(key, value)
+
+    def __delitem__(self, key: str) -> None:
+        self.delete(key)
 
     def populate_cache(self) -> None:
         """Entirely populate the cache with all the keys in the database."""

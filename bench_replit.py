@@ -9,6 +9,6 @@ def bench_replit():
     db.get("test")
 
 
-print(timeit(bench_replit, number=10))
+print(timeit(bench_replit, number=100))
 
 del db["test"]
