@@ -1,5 +1,5 @@
 from __future__ import annotations
-from httpx import Client, Response
+from httpx import Client
 from json import JSONDecodeError
 from typing import Any, Dict, List, Optional, Union
 from os import environ
@@ -37,30 +37,6 @@ class Database:
         """Entirely populate the cache with all the keys in the database."""        
         for key in self.keys():
             self._cache[key] = self.get(key)
-            
-
-    def req(
-        self,
-        method: str = "GET",
-        path: str = "",
-        headers: Dict[str, str] = {},
-        json: Optional[str] = None,
-        **kwargs,
-    ) -> Response:
-        """Underlying request method. The client's base url is set to `db_url`.
-
-        Args:
-            method (str, optional): The HTTP method to use. Defaults to "GET".
-            path (str, optional): The path to send a request to. Defaults to "".
-            headers (Dict[str, str], optional): The headers to include with the request. Defaults to {}.
-            json (Optional[str], optional): the JSON body to send with the request. Defaults to None.
-
-        Returns:
-            Response: The returned HTTP response.
-        """
-        return self.http.request(
-            method=method, url=path, json=json, headers=headers, **kwargs
-        )
 
     def keys(self) -> List[str]:
         """List all the keys in the database.
@@ -79,7 +55,7 @@ class Database:
         Returns:
             List[str]: Every key in the database that starts with the prefix.
         """
-        return self.req(path=f"?prefix={prefix}").text.splitlines()
+        return self.http.get(f"?prefix={prefix}").text.splitlines()
 
     def get(self, key: str) -> Union[Dict[str, Any], str, List[Dict[str, Any]], None]:
         """Get a value from the database.
@@ -92,7 +68,7 @@ class Database:
         """
         if key in self._cache:
             return self._cache[key]
-        res = self.req(path=f"/{key}")
+        res = self.http.get(f"/{key}")
         if res.status_code == 404:
             return None
         try:
@@ -116,8 +92,7 @@ class Database:
         Args:
             data (Dict[str, Any]): the data to set in the database.
         """
-        self.req(
-            "POST",
+        self.http.post(
             "/",
             json=str(data),
             headers={"Content-Type": "application/json"},
@@ -130,7 +105,7 @@ class Database:
         Args:
             key (str): the key to delete from the database.
         """
-        self.req("DELETE", f"/{key}")
+        self.http.delete(f"/{key}")
         if key in self._cache:
             del self._cache[key]
 
@@ -227,7 +202,7 @@ class Table:
 
         self.__on_mutate()
 
-    def get(self, *text, **filters) -> Optional[List[dict]]:
+    def get(self, **filters) -> Optional[List[dict]]:
         """Gets all documents matching the given query.
 
         Args:
@@ -239,11 +214,11 @@ class Table:
         """
         filtered = filter_list(self.data, **filters)
 
-        if not (text or filters):
+        if not filters:
             return self.data
         return filtered
 
-    def get_one(self, *args, **filters):
+    def get_one(self, **filters):
         """Gets the first document matching the given query.
 
         Args:
@@ -253,10 +228,8 @@ class Table:
         Returns:
             dict: The document found.
         """
-        if args and filters:
-            raise ValueError("Both args or filters were passed!")
         try:
-            return self.get(*args, **filters)[0]
+            return self.get(**filters)[0]
         except IndexError:
             return None
 
