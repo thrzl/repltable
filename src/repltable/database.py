@@ -178,6 +178,7 @@ class Database:
         """Close the database connection."""
         self.http.close()
 
+
 class Table:
     __slots__ = ("_cache", "db", "name", "data")
     """An object representing a table in the database.
