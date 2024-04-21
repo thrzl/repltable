@@ -1,6 +1,8 @@
 from timeit import timeit
-from repltable import db
+from repltable import Database
 
+
+db = Database()
 db.set("test", "item")
 
 
