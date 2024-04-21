@@ -131,7 +131,8 @@ class Database:
             key (str): the key to delete from the database.
         """
         self.req("DELETE", f"/{key}")
-        del self._cache[key]
+        if key in self._cache:
+            del self._cache[key]
 
     def get_table(self, table: str) -> Table:
         """Get a table from the database.
