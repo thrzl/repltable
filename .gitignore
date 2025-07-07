@@ -3,3 +3,4 @@
 dist
 .mypy_cache
 .env*
+.venv
